@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: besu-config-toml-configmap
+  labels:
+    app: besu-config-toml-configmap
+  namespace: besu
+data:
+  config.toml: |-
+
+    # Node Information
+    data-path="/data"
+    genesis-file="/etc/genesis/genesis.json"
+    logging="INFO"
+
+    # Network gas
+    min-gas-price=0
+
+    # Transaction Pool
+    tx-pool="sequenced"   
+    tx-pool-retention-hours=1   
+    tx-pool-limit-by-account-percentage=1   
+    tx-pool-max-size=2500
+
+    # P2P network
+    p2p-enabled=true
+    discovery-enabled=true
+    #p2p-host="0.0.0.0"
+    p2p-port=30303
+    max-peers=25
+    remote-connections-limit-enabled=false
+    host-allowlist=["*"]
+
+    # JSON-RPC
+    rpc-http-enabled=true
+    rpc-http-host="0.0.0.0"
+    rpc-http-port=8545
+    rpc-http-api=["DEBUG","ETH", "ADMIN", "WEB3", "IBFT", "NET", "EEA", "WEB3", "PRIV", "PERM"]
+    rpc-http-cors-origins=["*"]
+    rpc-http-authentication-enabled=false
+
+    # GRAPHQL-RPC
+    graphql-http-enabled=false
+    graphql-http-host="0.0.0.0"
+    graphql-http-port=8547
+    graphql-http-cors-origins=["*"]
+
+    # WebSockets API
+    rpc-ws-enabled=false
+    rpc-ws-host="0.0.0.0"
+    rpc-ws-port=8546
+    rpc-ws-api=["DEBUG","ETH", "ADMIN", "WEB3", "IBFT", "NET", "EEA", "WEB3", "PRIV", "PERM"]
+    rpc-ws-authentication-enabled=false
+
+    # Metrics
+    metrics-enabled=true
+    metrics-host="0.0.0.0"
+    metrics-port=9545
