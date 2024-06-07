@@ -56,6 +56,13 @@ spec:
         prometheus.io/path: "/metrics"
     spec:
       serviceAccountName: node4-sa
+      initContainers:
+      - name: init-chmod
+        image: busybox
+        command: ["sh", "-c", "chmod -R 777 /data"]
+        volumeMounts:
+        - name: data
+          mountPath: /data
       containers:
         - name: node4
           image: hyperledger/besu:24.3
