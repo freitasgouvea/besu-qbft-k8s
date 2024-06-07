@@ -125,7 +125,7 @@ spec:
                 --node-private-key-file=/secrets/key \
                 --config-file=/etc/besu/config.toml \
                 --Xdns-enabled=true --Xdns-update-enabled=true --Xnat-kube-service-name=besu-node2 \
-                --bootnodes=enode://${NODE1_PUBLIC_KEY}@node1-0.besu-node1.besu.svc.cluster.local:30303
+                --bootnodes=enode://${NODE1_PUBLIC_KEY}@besu-node1:30303
       volumes:
         - name: key
           secret:
