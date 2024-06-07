@@ -131,7 +131,7 @@ spec:
             name: besu-config-toml-configmap
         - name: data
           persistentVolumeClaim:
-            claimName: node1-pvc
+            claimName: node2-pvc
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
