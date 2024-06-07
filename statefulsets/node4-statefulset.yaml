@@ -131,16 +131,4 @@ spec:
             name: besu-config-toml-configmap
         - name: data
           persistentVolumeClaim:
-            claimName: node4-pvc
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: node4-pvc
-  namespace: besu
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 50Gi
+            claimName: data-pvc-node4
