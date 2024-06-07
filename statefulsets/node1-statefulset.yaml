@@ -129,5 +129,17 @@ spec:
         configMap:
           name: besu-config-toml-configmap
       - name: data
-        emptyDir:
-          sizeLimit: "1Gi"
+        persistentVolumeClaim:
+          claimName: node1-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: node1-pvc
+  namespace: besu
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi
