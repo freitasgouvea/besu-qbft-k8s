@@ -136,7 +136,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: node2-pvc
+  name: node4-pvc
   namespace: besu
 spec:
   accessModes:
