@@ -8,9 +8,22 @@ Ensure you have the following installed:
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
 - [minikube](https://minikube.sigs.k8s.io/docs/start/)
 
+## TL;DR
+
+If you want to quickly deploy all artifacts, start Minikube or any other tool that allows you to run Kubernetes in your local environment and run the make command:
+```bash
+make
+```
+
+After testing you can delete all the resources using this command:
+
+```bash
+make clean
+```
+
 ## Setup Instructions
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+Follow these steps to deploy, run and test this project on your local machine.
 
 ### 1. Start Minikube
 
