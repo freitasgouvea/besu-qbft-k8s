@@ -134,12 +134,143 @@ This command returns information about the node’s Ethereum network identity, c
 
 By executing these tests, you can ensure that the network is fully operational and each node is correctly configured.
 
-## 10. Cleanup
+### 10. Cleanup
 
 To delete the deployment, run:
 ```bash
 kubectl delete namespace besu
 ```
+
+## Deploy on Azure
+
+If you want to run this project on Azure Kubernetes Service (AKS) instead of a local environment using Minikube, you need to make several updates and adjustments to your setup. Here are the steps and considerations:
+
+### Prerequisites
+
+Ensure you have the following installed:
+- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
+- [kubectl](https://kubernetes.io/docs/tasks/tools/)
+
+### Create an AKS Cluster
+
+Use the Azure CLI to create an AKS cluster. This includes creating a resource group, a virtual network, and the AKS cluster itself.
+
+```bash
+# Log in to your Azure account
+az login
+
+# Set your Azure subscription (if you have multiple subscriptions)
+az account set --subscription "your-subscription-id"
+
+# Create a resource group
+az group create --name myResourceGroup --location eastus
+
+# Register the Microsoft.Insights Resource Provider (in Windows)
+az provider register --namespace Microsoft.Insights
+
+# Create an AKS cluster
+az aks create --resource-group myResourceGroup --name myAKSCluster --node-count 4 --enable-addons monitoring --generate-ssh-keys --node-vm-size Standard_D2s_v3
+
+# Get credentials for kubectl
+az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
+```
+
+### Deploy 
+
+After that you can deploy the project 
+
+```
+make deploy
+```
+
+The artifcts deployed will shown on screen.
+
+### Test
+
+After exposing your Besu services to the internet via a LoadBalancer in AKS, you can test the setup by checking the external IP addresses assigned to your services and making requests to these endpoints. Here’s how to do it step-by-step:
+
+### 1. Verify External IP Addresses
+
+First, ensure that your services have been assigned external IP addresses. This might take a few minutes after you apply the service configurations.
+
+Run the following command to get the external IP addresses:
+
+```bash
+kubectl get svc -n besu
+```
+
+You should see an output similar to this:
+
+```plaintext
+NAME          TYPE           CLUSTER-IP     EXTERNAL-IP     PORT(S)                         AGE
+besu-node1    LoadBalancer   10.0.123.45    52.168.23.45    30303:30303/UDP,30303:30303/TCP 5m
+besu-node2    LoadBalancer   10.0.123.46    52.168.23.46    30303:30303/UDP,30303:30303/TCP 5m
+besu-node3    LoadBalancer   10.0.123.47    52.168.23.47    30303:30303/UDP,30303:30303/TCP 5m
+besu-node4    LoadBalancer   10.0.123.48    52.168.23.48    30303:30303/UDP,30303:30303/TCP 5m
+```
+
+### 2. Test JSON-RPC Endpoints
+
+You can test the JSON-RPC interface of each node by making HTTP requests to the external IP addresses. Here’s an example using `curl`:
+
+```bash
+curl -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"net_version","params":[],"id":1}' http://52.168.23.45:8545
+```
+
+If everything is set up correctly, you should get a response similar to:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": "381660001"  # This will be your chain ID defined in genesis.json
+}
+```
+
+Repeat this for each node's external IP to ensure they are all reachable.
+
+### 3. Test P2P Network Connectivity
+
+To ensure that your nodes can communicate with each other over the P2P network, you need to check the logs of each node for successful peer connections. Use the following command to check the logs:
+
+```bash
+kubectl logs <pod-name> -n besu
+```
+
+Replace `<pod-name>` with the name of your pod. You can get the pod names by running:
+
+```bash
+kubectl get pods -n besu
+```
+
+In the logs, look for entries indicating successful peer connections. You should see lines similar to:
+
+```plaintext
+2024-06-06 12:34:56.789+00:00 | p2p-discovery-worker-2 | INFO  | PeerDiscoveryAgent | Found 1 new peers
+2024-06-06 12:34:57.123+00:00 | EthScheduler-Workers-2 | INFO  | EthereumWireProtocol | Successfully connected to peer: <peer-info>
+```
+
+### 4. Test with an RPC Method
+
+You can further test by using different JSON-RPC methods. For example, to get the latest block number:
+
+```bash
+curl -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' http://52.168.23.45:8545
+```
+
+A successful response will look like:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": "0x1"  # This is the block number in hexadecimal
+}
+```
+
+### Summary
+
+By following these steps, you can verify that your Besu nodes are correctly exposed to the internet and are functioning as expected. You’ll be able to interact with them using the JSON-RPC API and ensure they are properly connected within the P2P network.
 
 ## Conclusion
 
