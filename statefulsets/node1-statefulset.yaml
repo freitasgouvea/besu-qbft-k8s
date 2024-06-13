@@ -56,6 +56,13 @@ spec:
         prometheus.io/path: "/metrics"
     spec:
       serviceAccountName: node1-sa
+      initContainers:
+      - name: init-chmod
+        image: busybox
+        command: ["sh", "-c", "chmod -R 777 /data"]
+        volumeMounts:
+        - name: data
+          mountPath: /data
       containers:
       - name: node1
         image: hyperledger/besu:24.3
@@ -129,5 +136,5 @@ spec:
         configMap:
           name: besu-config-toml-configmap
       - name: data
-        emptyDir:
-          sizeLimit: "1Gi"
+        persistentVolumeClaim:
+          claimName: data-pvc-node1

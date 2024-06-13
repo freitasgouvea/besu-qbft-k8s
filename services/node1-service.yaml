@@ -6,7 +6,7 @@ metadata:
     app: node1
   namespace: besu
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app: node1
   ports:

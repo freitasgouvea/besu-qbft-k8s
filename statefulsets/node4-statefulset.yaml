@@ -56,6 +56,13 @@ spec:
         prometheus.io/path: "/metrics"
     spec:
       serviceAccountName: node4-sa
+      initContainers:
+      - name: init-chmod
+        image: busybox
+        command: ["sh", "-c", "chmod -R 777 /data"]
+        volumeMounts:
+        - name: data
+          mountPath: /data
       containers:
         - name: node4
           image: hyperledger/besu:24.3
@@ -118,7 +125,7 @@ spec:
                 --node-private-key-file=/secrets/key \
                 --config-file=/etc/besu/config.toml \
                 --Xdns-enabled=true --Xdns-update-enabled=true --Xnat-kube-service-name=besu-node4 \
-                --bootnodes=enode://${NODE1_PUBLIC_KEY}@node1-0.besu-node1.besu.svc.cluster.local:30303
+                --bootnodes=enode://${NODE1_PUBLIC_KEY}@besu-node1:30303
       volumes:
         - name: key
           secret:
@@ -130,5 +137,5 @@ spec:
           configMap:
             name: besu-config-toml-configmap
         - name: data
-          emptyDir:
-            sizeLimit: "1Gi"
+          persistentVolumeClaim:
+            claimName: data-pvc-node4
