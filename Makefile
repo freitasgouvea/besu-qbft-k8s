@@ -8,8 +8,5 @@ deploy:
 	kubectl apply -f statefulsets
 	@echo "Done"
 
-deploy-azure:
-
 clean:
 	kubectl delete namespace besu
-
