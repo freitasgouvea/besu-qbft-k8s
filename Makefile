@@ -9,4 +9,9 @@ deploy:
 	@echo "Done"
 
 clean:
+	kubectl delete statefulsets
+	kubectl delete services
+	kubectl delete persistentvolumeclaims
+	kubectl delete secrets
+	kubectl delete configmap
 	kubectl delete namespace besu
